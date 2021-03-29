@@ -30,22 +30,22 @@ balls_pos = []
 square_pos = []
 
 
-def click(event):
+def click(event_type):
     """
     Функция возвращает координаты щелчка мыши
-    :param event: событие - щелчок мыши
+    :param event_type: событие - щелчок мыши
     """
-    (x, y) = event.pos
+    (x, y) = event_type.pos
     return [x, y]
 
 
-def score_show(score):
+def score_show(score_num):
     """
     функция выводит количество очков на экран
-    :param score: текущее количество очков
+    :param score_num: текущее количество очков
     """
     f1 = pygame.font.Font(None, 36)
-    text1 = f1.render('Score: ' + str(score), True, (180, 0, 0))
+    text1 = f1.render('Score: ' + str(score_num), True, (180, 0, 0))
     screen.blit(text1, (10, 50))
 
 
@@ -89,89 +89,91 @@ for i in range(2):
     square_pos.append(new_square())
 
 
-def catch_ball(func_click, balls_pos):
+def catch_ball(func_click, balls_position):
     """
     Функция проверяет, был ли клик внутри шара, если да, то прибавляет 1 очко
     :param func_click: координаты х и у щелчка мыши
-    :param balls_pos: массив шариков
+    :param balls_position: массив шариков
     """
     global score
-    for i in range(len(balls_pos)):
-        if math.sqrt((func_click[0] - balls_pos[i][0]) ** 2 + (func_click[1] - balls_pos[i][1]) ** 2) <= balls_pos[i][
-            2]:
-            del balls_pos[i]
-            balls_pos.append(new_ball())
+    for i in range(len(balls_position)):
+        if math.sqrt((func_click[0] - balls_position[i][0]) ** 2 + (func_click[1] - balls_position[i][1]) ** 2) <= \
+                balls_position[i][
+                    2]:
+            del balls_position[i]
+            balls_position.append(new_ball())
             score += 1
 
 
-def catch_square(func_click, square_pos):
+def catch_square(func_click, square_position):
     """
     Функция проверяет, был ли клик внутри квадрата, если да, то прибавляет 3 очка
     :param func_click: координаты клика
-    :param square_pos: координаты верхнего левого угла квадрата
+    :param square_position: координаты верхнего левого угла квадрата
     """
     global score
-    for i in range(len(square_pos)):
-        if 0 < (func_click[0] - square_pos[i][0]) < square_pos[i][2]:
-            if 0 < (func_click[1] - square_pos[i][1]) < square_pos[i][2]:
-                del square_pos[i]
-                square_pos.append(new_square())
+    for i in range(len(square_position)):
+        if 0 < (func_click[0] - square_position[i][0]) < square_position[i][2]:
+            if 0 < (func_click[1] - square_position[i][1]) < square_position[i][2]:
+                del square_position[i]
+                square_position.append(new_square())
                 score += 3
 
 
-def move_balls(balls_pos):
+def move_balls(balls_position):
     """
     Функция перемещает шары в соответствии с их параметрами из массива.
     Если шар касается границы экрана, он отскакивает от него.
-    :param balls_pos: массив шаров
+    :param balls_position: массив шаров
     """
-    for i in range(len(balls_pos)):
-        balls_pos[i][0] += balls_pos[i][4]
-        balls_pos[i][1] += balls_pos[i][5]
+    for i in range(len(balls_position)):
+        balls_position[i][0] += balls_position[i][4]
+        balls_position[i][1] += balls_position[i][5]
 
-        if balls_pos[i][0] + balls_pos[i][2] >= screen_width:
-            balls_pos[i][4] = -balls_pos[i][4] / balls_pos[i][4] * randint(1, 10)
+        if balls_position[i][0] + balls_position[i][2] >= screen_width:
+            balls_position[i][4] = -balls_position[i][4] / balls_position[i][4] * randint(1, 10)
 
-        if balls_pos[i][0] - balls_pos[i][2] <= 0:
-            balls_pos[i][4] = balls_pos[i][4] / balls_pos[i][4] * randint(1, 10)
+        if balls_position[i][0] - balls_position[i][2] <= 0:
+            balls_position[i][4] = balls_position[i][4] / balls_position[i][4] * randint(1, 10)
 
-        if balls_pos[i][1] + balls_pos[i][2] >= screen_height:
-            balls_pos[i][5] = -balls_pos[i][5] / balls_pos[i][5] * randint(1, 10)
+        if balls_position[i][1] + balls_position[i][2] >= screen_height:
+            balls_position[i][5] = -balls_position[i][5] / balls_position[i][5] * randint(1, 10)
 
-        if balls_pos[i][1] - balls_pos[i][2] <= 0:
-            balls_pos[i][5] = balls_pos[i][5] / balls_pos[i][5] * randint(1, 10)
+        if balls_position[i][1] - balls_position[i][2] <= 0:
+            balls_position[i][5] = balls_position[i][5] / balls_position[i][5] * randint(1, 10)
 
-        circle(screen, balls_pos[i][3], (balls_pos[i][0], balls_pos[i][1]), balls_pos[i][2])
+        circle(screen, balls_position[i][3], (balls_position[i][0], balls_position[i][1]), balls_position[i][2])
 
 
-def move_squares(square_pos):
+def move_squares(square_position):
     """
     Функция перемещает квадраты в соответствии с их параметрами из массива.
-    :param square_pos: массив квадратов
+    :param square_position: массив квадратов
     """
-    for i in range(len(square_pos)):
-        square_pos[i][0] += square_pos[i][4]
-        square_pos[i][1] += square_pos[i][5]
+    for i in range(len(square_position)):
+        square_position[i][0] += square_position[i][4]
+        square_position[i][1] += square_position[i][5]
 
-        if square_pos[i][0] + square_pos[i][2] >= screen_width:
-            square_pos[i][0] -= square_pos[i][4]
-            square_pos[i][4] = - square_pos[i][4]
+        if square_position[i][0] + square_position[i][2] >= screen_width:
+            square_position[i][0] -= square_position[i][4]
+            square_position[i][4] = - square_position[i][4]
 
-        if square_pos[i][0] <= 0:
-            square_pos[i][0] -= square_pos[i][4]
-            square_pos[i][4] = - square_pos[i][4]
+        if square_position[i][0] <= 0:
+            square_position[i][0] -= square_position[i][4]
+            square_position[i][4] = - square_position[i][4]
 
-        if square_pos[i][1] + square_pos[i][2] >= screen_height:
-            square_pos[i][1] -= square_pos[i][5]
-            square_pos[i][5] = - square_pos[i][5]
-            square_pos[i][5] -= square_pos[i][5] * 0.2 - 0.01
+        if square_position[i][1] + square_position[i][2] >= screen_height:
+            square_position[i][1] -= square_position[i][5]
+            square_position[i][5] = - square_position[i][5]
+            square_position[i][5] -= square_position[i][5] * 0.2 - 0.01
 
-        if square_pos[i][1] <= 0:
-            square_pos[i][1] -= square_pos[i][5]
-            square_pos[i][5] = - square_pos[i][5]
-            square_pos[i][5] += square_pos[i][5] * 0.2 - 0.01
+        if square_position[i][1] <= 0:
+            square_position[i][1] -= square_position[i][5]
+            square_position[i][5] = - square_position[i][5]
+            square_position[i][5] += square_position[i][5] * 0.2 - 0.01
 
-        rect(screen, square_pos[i][3], (square_pos[i][0], square_pos[i][1], square_pos[i][2], square_pos[i][2]))
+        rect(screen, square_position[i][3],
+             (square_position[i][0], square_position[i][1], square_position[i][2], square_position[i][2]))
 
 
 pygame.display.update()
