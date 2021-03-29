@@ -11,6 +11,7 @@ screen.pack(fill=tk.BOTH, expand=True)
 
 count_bumbs = 0
 
+
 class Ball:
     def __init__(self, x=40, y=450):
         """ Конструктор класса Ball
@@ -94,7 +95,6 @@ class Gun():
         global balls, bullet
         bullet += 1
         new_ball = Ball()
-        # new_ball.r += 5
         self.an = math.atan((event.y - new_ball.y) / (event.x - new_ball.x))
         new_ball.speed_x = self.f2_power * math.cos(self.an)
         new_ball.speed_y = - self.f2_power * math.sin(self.an)
@@ -128,18 +128,11 @@ class Target:
     def __init__(self):
         self.points = 0
         self.live = 1
+        self.velocity_x = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        self.velocity_y = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
         self.id = screen.create_oval(0, 0, 0, 0, )
         self.id_points = screen.create_text(30, 30, text=self.points, font='28')
         self.new_target()
-
-    def new_target(self):
-        """ Инициализация новой цели. """
-        x = self.x = rnd(600, 780)
-        y = self.y = rnd(300, 550)
-        r = self.r = rnd(20, 50)
-        color = self.color = 'red'
-        screen.coords(self.id, x - r, y - r, x + r, y + r)
-        screen.itemconfig(self.id, fill=color)
 
     def hit(self, points=1):
         """Попадание шарика в цель."""
@@ -147,8 +140,52 @@ class Target:
         self.points += points
         screen.itemconfig(self.id_points, text=self.points)
 
+    def move(self):
+        """
+        Функция двигает шарики цели и не дает им вылететь за экран
+        """
+        self.x += self.velocity_x
+        self.y += self.velocity_y
+        if self.x + self.r >= 800:
+            self.velocity_x = -self.velocity_x
+
+        if self.x - self.r <= 0:
+            self.velocity_x = -self.velocity_x
+
+        if self.y + self.r >= 600:
+            self.velocity_y = -self.velocity_y
+
+        if self.y - self.r <= 0:
+            self.velocity_y = -self.velocity_y
+        screen.coords(self.id, self.x - self.r, self.y - self.r, self.x + self.r, self.y + self.r)
+        screen.itemconfig(self.id, fill='red')
+
+    def new_target(self):
+        x = self.x = rnd(600, 780)
+        y = self.y = rnd(300, 550)
+        r = self.r = rnd(20, 50)
+        color = self.color = 'red'
+        screen.coords(self.id, x - r, y - r, x + r, y + r)
+        screen.itemconfig(self.id, fill=color)
+
+
+class Square(Target):
+    def __init__(self):
+        self.points = 0
+        self.live = 1
+        self.velocity_x = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        self.velocity_y = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+        self.id = screen.create_oval(0, 0, 0, 0, )
+        self.id_points = screen.create_text(30, 30, text=self.points, font='28')
+        self.new_target()
+        self.id = screen.create_rectangle(
+            230, 10, 290, 60,
+            outline="#f11", fill="#1f1", width=2
+        )
+
 
 t1 = Target()
+t2 = Square()
 screen1 = screen.create_text(400, 300, text='', font='28')
 g1 = Gun()
 bullet = 0
@@ -156,16 +193,20 @@ balls = []
 
 
 def new_game(event=''):
-    global Gun, t1, screen1, balls, bullet
+    global Gun, t1, t2, screen1, balls, bullet
     t1.live = 1
+    t2.live = 1
     screen.itemconfig(screen1, text='')
     t1.new_target()
+    t2.new_target()
     bullet = 0
     balls = []
     screen.bind('<Button-1>', g1.fire2_start)
     screen.bind('<ButtonRelease-1>', g1.fire2_end)
     screen.bind('<Motion>', g1.targetting)
-    while t1.live or balls:
+    while t1.live or t2.live or balls:
+        t1.move()
+        t2.move()
         for b in balls:
             b.move()
             b.set_coords()
