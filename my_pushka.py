@@ -168,24 +168,7 @@ class Target:
         screen.coords(self.id, x - r, y - r, x + r, y + r)
         screen.itemconfig(self.id, fill=color)
 
-
-class Square(Target):
-    def __init__(self):
-        self.points = 0
-        self.live = 1
-        self.velocity_x = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-        self.velocity_y = choice([-10, -9, -8, -7, -6, -6, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
-        self.id = screen.create_oval(0, 0, 0, 0, )
-        self.id_points = screen.create_text(30, 30, text=self.points, font='28')
-        self.new_target()
-        self.id = screen.create_rectangle(
-            230, 10, 290, 60,
-            outline="#f11", fill="#1f1", width=2
-        )
-
-
 t1 = Target()
-t2 = Square()
 screen1 = screen.create_text(400, 300, text='', font='28')
 g1 = Gun()
 bullet = 0
@@ -193,12 +176,10 @@ balls = []
 
 
 def new_game(event=''):
-    global Gun, t1, t2, screen1, balls, bullet
+    global Gun, t1, screen1, balls, bullet
     t1.live = 1
-    t2.live = 1
     screen.itemconfig(screen1, text='')
     t1.new_target()
-    t2.new_target()
     bullet = 0
     balls = []
     screen.bind('<Button-1>', g1.fire2_start)
@@ -206,7 +187,6 @@ def new_game(event=''):
     screen.bind('<Motion>', g1.targetting)
     while t1.live or t2.live or balls:
         t1.move()
-        t2.move()
         for b in balls:
             b.move()
             b.set_coords()
